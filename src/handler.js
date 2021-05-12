@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+/* eslint-disable consistent-return */
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
