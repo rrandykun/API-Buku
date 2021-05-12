@@ -10,14 +10,14 @@ const addBookHandler = (request, h) => {
 
   const id = nanoid(16);
 
-  const finished = (pageCount, readPage) => {
-    if (pageCount === readPage) {
-      return true;
-    }
-    if (pageCount !== readPage) {
-      return false;
-    }
-  };
+  let finished;
+
+  if (pageCount === readPage) {
+    finished = true;
+  }
+  if (pageCount !== readPage) {
+    finished = false;
+  }
 
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
@@ -59,6 +59,8 @@ const addBookHandler = (request, h) => {
 
   const isSuccess = books.filter((book) => book.id === id).length > 0;
 
+  console.log(finished);
+
   if (isSuccess) {
     const response = h.response({
       status: 'success',
@@ -98,7 +100,7 @@ const getAllBooksHandler = (request, h) => {
             })),
       },
     });
-    console.log(name.toLowerCase());
+    response.code(200);
     return response;
   }
 
@@ -117,6 +119,7 @@ const getAllBooksHandler = (request, h) => {
               })),
         },
       });
+      response.code(200);
       return response;
     }
     if (reading === '0') {
@@ -132,6 +135,7 @@ const getAllBooksHandler = (request, h) => {
               })),
         },
       });
+      response.code(200);
       return response;
     }
   }
@@ -151,6 +155,7 @@ const getAllBooksHandler = (request, h) => {
               })),
         },
       });
+      response.code(200);
       return response;
     }
     if (finished === '0') {
@@ -166,10 +171,12 @@ const getAllBooksHandler = (request, h) => {
               })),
         },
       });
+      response.code(200);
       return response;
     }
   }
 
+  // tampilkan semua
   const response = h.response({
     status: 'success',
     data: {
@@ -181,7 +188,31 @@ const getAllBooksHandler = (request, h) => {
           })),
     },
   });
+  response.code(200);
   return response;
 };
 
-module.exports = { addBookHandler, getAllBooksHandler };
+const getBookByIdHandler = (request, h) => {
+  const { bookId } = request.params;
+
+  const book = books.filter((b) => b.id === bookId)[0];
+
+  if (book !== undefined) {
+    const response = h.response({
+      status: 'success',
+      data: {
+        book,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  const response = h.response({
+    status: 'fail',
+    message: 'Buku tidak ditemukan',
+  });
+  response.code(404);
+  return response;
+};
+
+module.exports = { addBookHandler, getAllBooksHandler, getBookByIdHandler };
