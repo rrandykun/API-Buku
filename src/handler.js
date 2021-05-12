@@ -81,16 +81,107 @@ const addBookHandler = (request, h) => {
   }
 };
 
-const getAllBooksHandler = () => ({
-  status: 'success',
-  data: {
-    books:
-        books.map((buku) => ({
-          id: buku.id,
-          name: buku.name,
-          publisher: buku.publisher,
-        })),
-  },
-});
+const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
+
+  // cek query name
+  if (name !== undefined) {
+    const response = h.response({
+      status: 'success',
+      data: {
+        books:
+          books.filter((buku) => buku.name.toLowerCase().includes(name.toLowerCase()))
+            .map((buku) => ({
+              id: buku.id,
+              name: buku.name,
+              publisher: buku.publisher,
+            })),
+      },
+    });
+    console.log(name.toLowerCase());
+    return response;
+  }
+
+  // cek query reading
+  if (reading !== undefined) {
+    if (reading === '1') {
+      const response = h.response({
+        status: 'success',
+        data: {
+          books:
+            books.filter((buku) => buku.reading === true)
+              .map((buku) => ({
+                id: buku.id,
+                name: buku.name,
+                publisher: buku.publisher,
+              })),
+        },
+      });
+      return response;
+    }
+    if (reading === '0') {
+      const response = h.response({
+        status: 'success',
+        data: {
+          books:
+            books.filter((buku) => buku.reading === false)
+              .map((buku) => ({
+                id: buku.id,
+                name: buku.name,
+                publisher: buku.publisher,
+              })),
+        },
+      });
+      return response;
+    }
+  }
+
+  // cek query finished
+  if (finished !== undefined) {
+    if (finished === '1') {
+      const response = h.response({
+        status: 'success',
+        data: {
+          books:
+            books.filter((buku) => buku.finished === true)
+              .map((buku) => ({
+                id: buku.id,
+                name: buku.name,
+                publisher: buku.publisher,
+              })),
+        },
+      });
+      return response;
+    }
+    if (finished === '0') {
+      const response = h.response({
+        status: 'success',
+        data: {
+          books:
+            books.filter((buku) => buku.finished === false)
+              .map((buku) => ({
+                id: buku.id,
+                name: buku.name,
+                publisher: buku.publisher,
+              })),
+        },
+      });
+      return response;
+    }
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books:
+          books.map((buku) => ({
+            id: buku.id,
+            name: buku.name,
+            publisher: buku.publisher,
+          })),
+    },
+  });
+  return response;
+};
 
 module.exports = { addBookHandler, getAllBooksHandler };
